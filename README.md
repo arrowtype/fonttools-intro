@@ -98,20 +98,36 @@ As I was starting into font development, it was confusing to me that there were 
 
 ## Using FontTools for common font development tasks
 
-### Installation
+**Cloning the repo**
+
+To work directly with these examples, you should have [Git set up on your computer](https://help.github.com/en/github/getting-started-with-github/set-up-git).
+
+To try these examples, clone this repo onto your computer!
+
+```bash
+# first, use `cd` to navigate the parent directory of where you want to work
+git clone https://github.com/arrowtype/fonttools-intro.git
+cd fonttools-intro # change directory into the cloned repo
+```
+
+**Setup**
 
 1. To use FontTools, you first have to [Download Python](http://python.org/download/) and install it if you haven’t already.
 
 2. To try the examples in this repo, set up a virtual environment. Navigate to this directory in a command line, then make a venv and activate it:
 
 ```bash
-python3 -m venv venv      # creates venv directory with a copy of Python3
-source venv/bin/activate  # activates virtual environment.
+python3 -m venv venv      # creates a virtual environment in directory `venv`
+source venv/bin/activate  # activates virtual environment
 ```
 
-Use `source venv/bin/activate` again if you close and come back to the folder later.
+If you close and come back to the folder later, use `source venv/bin/activate` again.
 
-3. Install FontTools. You can use the command `pip install fonttools` to do so.
+3. Install FontTools with Pip:
+
+```bash
+pip install fonttools
+```
 
 
 ### TTX
@@ -121,13 +137,13 @@ Just like web browsers have Developer Tools which allow you to “Inspect” the
 A common way to use TTX is to simply build a XML from an OTF or TTF file (replacing the all-caps placeholders with an actual font filepath):
 
 ```bash
-ttx -t name -o- examples/Recursive_VF_1.053.ttf # makes the XML file examples/Recursive_VF_1.053.ttx
+ttx examples/Recursive_VF_1.053.ttf # makes XML file examples/Recursive_VF_1.053.ttx
 ```
 
 However, often, you only want to look at a single table of a font such as the `name` table. You also usually don’t need to save a new ttx file, but just want to check values. So, my favorite recipe is this:
 
 ```bash
-ttx -t name -o- examples/Recursive_VF_1.053.ttf
+ttx -t name -o- examples/Recursive_VF_1.053.ttf # just shows the name table
 ```
 
 In that command, `-t name` specifies that only the name table should be converted to XML, and `-o-` specifies that the “output” should be nothing (and so, rather than a file, the XML is simply printed directly in the terminal). I remember this because `-o-` looks a bit like an emoticon owl.
@@ -136,7 +152,7 @@ TTX will also compile a TTX file back into a binary font file. So, it is possibl
 
 ```bash
 ttx examples/Recursive_VF_1.053.ttf # outputs examples/Recursive_VF_1.053.ttx
-# you can make some edits, e.g. changing the font family name in name IDs 1, 3, 4, 6, and 16
+# you can make some manual edits, e.g. changing name table entries
 ttx examples/Recursive_VF_1.053.ttx # outputs examples/Recursive_VF_1.053#1.ttf
 ```
 
