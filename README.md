@@ -257,6 +257,12 @@ Help on class TTFont in module fontTools.ttLib.ttFont # etc etc
 - [The FontTools Docs](https://fonttools.readthedocs.io/en/latest/index.html)
 - [A very good TTFont tutorial by Lynne Yun](https://github.com/lynneyun/Tutorials/blob/6cabd407054431559b30d66d9b664462bb1d58b7/FontTools%20%26%20DrawBot/Navigating%20TTFs%20with%20fontTools.ipynb)
 
+## Fonts used
+
+This uses Recursive VF 1.053, available as an OFL on GitHub ([permalink](https://github.com/arrowtype/recursive/blob/006828dd941878bf0819a97c9d6286f24972bb16/fonts_1.031/Variable_TTF/Recursive_VF_1.031.ttf)).
+
+The slide presentation also uses Name Sans, [available from Future Fonts](https://www.futurefonts.xyz/arrowtype/name-sans).
+
 ## Please do these two things:
 
 1. Check out https://arrowtype.github.io/vf-slnt-test/slnt-ital-tests/index.html, scroll to the bottom, and follow links to the Chromium & WebKit issues to voice your support for the prioritization of fixing the rendering of slnt & ital variable axes.
