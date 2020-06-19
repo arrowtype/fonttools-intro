@@ -237,12 +237,13 @@ You can delete a whole table like this:
 del font["mvar"]
 ```
 
-There’s a lot more to it, much of which I still need to learn. As with many things in Python, [the `help()` function](https://docs.python.org/3/library/functions.html#help) is your best friend! A good start: one the command line, run `python3`, import TTFont, and then run `help(TTFont)`:
+There’s a lot more to it, much of which I still need to learn. As with many things in Python, [the `help()` function](https://docs.python.org/3/library/functions.html#help) is your best friend! A good start: one the command line, run `python3`, import TTFont, and then run `help(TTFont)`. (You can exit the help view by hitting **q**, and exist out of the Python mode by hitting **control d**.)
 
-```python
-python3
+```bash
+$ python3
 >>> from fontTools.ttLib import TTFont
 >>> help(TTFont)
+Help on class TTFont in module fontTools.ttLib.ttFont # etc etc
 ```
 
 ------------------------------------------------------------------
