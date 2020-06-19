@@ -2,11 +2,11 @@
 
 This post is an introduction to FontTools and modern font development more generally.
 
-It is written from the perspective of a beginner/intermediate font designer & developer (me, Stephen Nixon / @ArrowType), intended as an approachable introduction to font development for designers or developer hoping to better understand some common processes & tools of font development.
+It is written from the perspective of a beginner/intermediate font designer & developer (me, Stephen Nixon / [@ArrowType](https://instagram.com/arrowtype)), intended as an approachable introduction to font development for designers or developers hoping to better understand some common processes & tools of font development.
 
-Basically, this is an attempt to write & present the guide I wish I had three years ago, when I first encountered font development as a student at KABK TypeMedia.
+Basically, this is an attempt to write & present the guide I wish I had three years ago, when I first encountered font development as a student at KABK TypeMedia. Some of it requires knowledge of navigating in a terminal and using Python, but a lot of it is written in hopes of being accessible to almost anyone.
 
-It is opinionated, limited to my current perspective, and possibly not 100% accurate. For this reason, I am presenting this at the [Typographics 2020 TypeLab](https://2020.typographics.com/typelab/) in hopes that more-experienced font developers might participate in coversation that can help me to correct any innaccuracies and improve this guide. Additionally, if you spot something here that is innacurate or if you have questions, please file an issue in this repo to help myself & others learn!
+It is opinionated, limited to my current perspective, and possibly not 100% accurate. For this reason, I am presenting this at the [Typographics 2020 TypeLab](https://2020.typographics.com/typelab/) in hopes that more-experienced font developers might participate in coversation that can help me to correct any innaccuracies and improve this guide. Additionally, if you spot something here that is innacurate or if you have questions, please file an [issue](https://github.com/arrowtype/fonttools-intro/issues) or [pull request](https://github.com/arrowtype/fonttools-intro/pulls) in this repo to help myself & others learn!
 
 ## Basic things to know about fonts & font development
 
@@ -35,7 +35,7 @@ For my purposes, FontTools is a set of code-based tools to read & manipulate:
 - UFO & Designspace font sources
 - More font formats that I haven’t yet needed to work with
 
-Rather than being one big thing, FontTools is a [*collection* of many tools](https://github.com/fonttools/fonttools/tree/master/Lib/fontTools), including:
+Rather than being one big thing, FontTools is a *collection* of [many tools](https://github.com/fonttools/fonttools/tree/master/Lib/fontTools), including:
 
 - **cu2qu** for conversion between cubic & quadratic Béziér curves
 - **designspaceLib** for reading & writing Designspace files
@@ -43,7 +43,7 @@ Rather than being one big thing, FontTools is a [*collection* of many tools](htt
 - **merge** to merge multiple font files into together
 - **pens** that can read & draw different kinds of Béziér paths
 - **subset** which can make font files smaller by eliminating (or subsetting) certain glyphs
-- **ttLib** converts TrueType fonts to/from Python objects, and Python objects to/from TTX. This includes **ttFont** which can be used to read/edit data in font binaries
+- **ttLib** converts TrueType fonts to/from Python objects, and Python objects to/from TTX. This includes **TTFont** which can be used to read/edit data in font binaries
 - **ttx** is a command-line tool to convert font binaries to/from human-readable [XML](https://developer.mozilla.org/en-US/docs/Web/XML/XML_introduction), allowing the data to be inspected or easily changed
 - **ufoLib** allows the reading & writing of UFO files & the data within
 - **varLib** allows the building of [variable fonts](https://variablefonts.io/), as well as the  instancing of variable fonts (trimming the amount of stylistic range in a variable font, either to make small variable fonts or single static fonts).
@@ -76,14 +76,6 @@ As I was starting into font development, it was confusing to me that there were 
 - Primarily sponsored & maintained by Google Fonts
 - Uses FontTools to build prepared UFOs into OTFs & TTFs
 
-**[AFDKO](https://github.com/adobe-type-tools/afdko/) (Adobe Font Development Kit for OpenType)**
-
-- Somewhat similar functionality to FontMake, but primarily sponsored & maintained by Adobe
-- Includes tools for proofing and validating font files
-- “a set of tools for building OpenType font files from PostScript and TrueType font data”
-- Has some advantages for building CFF fonts, like better CFF hinting & compression
-- Uses FontTools to build prepared UFOs into OTFs & TTFs
-
 **[FontBakery](https://github.com/googlefonts/fontbakery/)**
 
 - A command-line tool to run quality-assurance checks on fonts in various formats: UFO, TTF, OTF
@@ -95,13 +87,32 @@ As I was starting into font development, it was confusing to me that there were 
 - There are some “universal” checks useful for almost any font, and there are checks specific to the expectations of individual font libraries such as Google Fonts or Adobe Fonts
 - Uses FontTools to “inspect” font data in order to run checks
 
+**[AFDKO](https://github.com/adobe-type-tools/afdko/) (Adobe Font Development Kit for OpenType)**
 
-## The parts of FontTools which I use the most
+- Somewhat similar functionality to FontMake, but primarily sponsored & maintained by Adobe
+- My favorite part: `otf2otc`, which makes OTC files out of a collection of OTF files ([example](https://github.com/arrowtype/recursive/blob/2c1c9d58e2130851cd6cee804d71ccce73b75805/src/build-scripts/make-release/make-otc-files.sh))
+- Includes tools for proofing and validating font files
+- Has some advantages for building CFF fonts, like better CFF hinting & compression
+- Uses FontTools to build prepared UFOs into OTFs & TTFs
+- (Note: I don’t have as much experience with the AFDKO, so it is something I still need to learn more deeply. My apologies if the summary above isn’t perfect, but I welcome contributions.)
 
-To use FontTools, you first have to:
+## Using FontTools for common font development tasks
 
-1. [Download Python](http://python.org/download/) and install it if you haven’t already.
-2. Install FontTools. You can use the command `pip install fonttools` to do so.
+### Installation
+
+1. To use FontTools, you first have to [Download Python](http://python.org/download/) and install it if you haven’t already.
+
+2. To try the examples in this repo, set up a virtual environment. Navigate to this directory in a command line, then make a venv and activate it:
+
+```bash
+python3 -m venv venv      # creates venv directory with a copy of Python3
+source venv/bin/activate  # activates virtual environment.
+```
+
+Use `source venv/bin/activate` again if you close and come back to the folder later.
+
+3. Install FontTools. You can use the command `pip install fonttools` to do so.
+
 
 ### TTX
 
@@ -110,13 +121,13 @@ Just like web browsers have Developer Tools which allow you to “Inspect” the
 A common way to use TTX is to simply build a XML from an OTF or TTF file (replacing the all-caps placeholders with an actual font filepath):
 
 ```bash
-ttx -t name -o- FILEPATH/FONTNAME.ttf # makes the XML file FONTNAME.ttx
+ttx -t name -o- examples/Recursive_VF_1.053.ttf # makes the XML file examples/Recursive_VF_1.053.ttx
 ```
 
 However, often, you only want to look at a single table of a font such as the `name` table. You also usually don’t need to save a new ttx file, but just want to check values. So, my favorite recipe is this:
 
 ```bash
-ttx -t name -o- FILEPATH/FONTNAME.ttf
+ttx -t name -o- examples/Recursive_VF_1.053.ttf
 ```
 
 In that command, `-t name` specifies that only the name table should be converted to XML, and `-o-` specifies that the “output” should be nothing (and so, rather than a file, the XML is simply printed directly in the terminal). I remember this because `-o-` looks a bit like an emoticon owl.
@@ -124,42 +135,126 @@ In that command, `-t name` specifies that only the name table should be converte
 TTX will also compile a TTX file back into a binary font file. So, it is possible to TTX a font, make changes in the `.ttx` file, and then run TTX to save those edits into a working font.
 
 ```bash
-ttx FILEPATH/FONTNAME.ttf # outputs FILEPATH/FONTNAME.ttx
+ttx examples/Recursive_VF_1.053.ttf # outputs examples/Recursive_VF_1.053.ttx
 # you can make some edits, e.g. changing the font family name in name IDs 1, 3, 4, 6, and 16
-ttx FILEPATH/FONTNAME.ttx # outputs FILEPATH/FONTNAME#1.ttf
+ttx examples/Recursive_VF_1.053.ttx # outputs examples/Recursive_VF_1.053#1.ttf
 ```
 
 However, editing font files by editing the TTX is relatively slow and hard to repeat. For example, if you are processing a folder containing many static fonts within a type family, it will take time to covert from OTF/TTF to TTX, time to make the changes (even if you write a script to do so), and time to convert back to OTF/TTF. It will probably take a few minutes, and chances are, you may have to run the process many times while developing it, making it painfully slow. So, TTX is really best used as a font inspector. 
 
 To efficiently edit font data, it is much more useful to reach for `ttFont`.
 
-## Editing Font Names with ttFont
+## TTFont
 
-- ttFont
-- getName
-- setName
-- examples
+`ttFont` makes it possible to manipulate font binaries “directly” with Python (some conversion is involved to/from font data & Python objects, but it is very fast). The basic use ttFont is in a Python script:
 
-## Editing other Font Data
+1. Import ttFont with `from fontTools.ttLib import TTFont`
+2. Use it to open a font path `font = TTFont(fontPath)`
+3. Access font tables in the format of `font['head']`, and entries in the format of `font['head'].fontRevision` – refer to [the OpenType spec](https://docs.microsoft.com/en-us/typography/opentype/spec/otff#font-tables) for details on each table
+4. After updating data, save with `font.save(fontPath)`
 
-- get cmap
-- get an arbitrary table & entry within it
-- set an arbitrary table & entry within it
+### A basic example/template using TTFont
+
+A basic example of a Python script using TTFont is in `examples/00-ttfont-template.py`. To run it, make sure you navigate to this folder in a terminal, have your venv activated, and have FontTools installed, then run:
+
+```bash
+python examples/00-ttfont-template.py examples/Recursive_VF_1.053.ttf
+```
+
+It should output `→ name1 is 'Recursive Sans Linear Light'`.
+
+### Editing Font Names with TTFont
+
+It’s worth noting that font files have many different entries for names for various purposes, listed under [“Name IDs”](https://docs.microsoft.com/en-us/typography/opentype/spec/name#name-ids). This may be surprising at first, but there are a lot of names needed for a usable font!
+
+A common need might be updating the family name of a font.
+
+One method is provided at `examples/01-ttfont-name-updates.py`. This includes:
+
+- code comments to detail each line
+- helper functions to make it simpler to get & set names
+
+Run it from the directory above with the following command, include 1) a font path, and 2) a new family name:
+
+```bash
+python examples/01-ttfont-name-updates.py examples/Recursive_VF_1.053.ttf "New Name"
+```
+
+(The above command will output `NewName_VF_1.053.ttf`)
+
+Notice how *stupidly fast* it is to run that change. It takes a little longer to write the script, but with it, you can process many files, many times, in minimal time.
 
 ## Subsetting a Font
 
-- subsetter
+Running the following in the command line will subset Recursive to have a basic Latin character set:
+
+```bash
+fontPath="examples/Recursive_VF_1.053.ttf"
+pyftsubset $fontPath --flavor="woff2" --output-file="${fontPath/'.ttf'/--subset-GF_latin_basic.woff2}" --unicodes="U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD"
+```
+
+This can be further configured with [other unicodes & unicode ranges](https://en.wikipedia.org/wiki/List_of_Unicode_characters).
+
+As with many command line tools, you can learn how more about using it by running `pyftsubset --help`.
 
 ## Instancing a Variable Font
 
-- commandline
-- python module
+You can use the Instancer to make smaller instances of a variable font, “pinning” axes to a single value or limiting them to given ranges. You can run it as a python module or from the command line. (One current limitation: axis ranges must include their default position, such as Recursive’s `wght` default of `300`.) For example:
+
+```bash
+fonttools varLib.instancer examples/Recursive_VF_1.053.ttf CASL=1 wght=300:850 # outputs examples/Recursive_VF_1.053-partial.ttf
+```
+
+The docs in [instancer.py](https://github.com/fonttools/fonttools/blob/master/Lib/fontTools/varLib/instancer.py) are very good.
+
+## Putting several techniques together
+
+The script `examples/02-make-trial-font.py` puts several of these techniques together to make a “trial” font, keeping characters for specified unicodes while hiding the rest with a “replacer” glyph.
+
+```bash
+python examples/02-make-trial-font.py examples/Recursive_VF_1.053.ttf -r "asterisk"
+```
+
+This script also makes use of Python `argparse` to allow multiple arguments to be passed in from the command line. Run `python examples/02-make-trial-font.py --help` to see more options for the script (or look at the code itself).
+
+The result of the command above is a font that subsets out non-basic Latin characters, and updates their previous unicodes to point to the asterisk glyph. In text, the result looks like this:
+
+![French Wikipedia with a Recursive “Trial” font](assets/2020-06-18-23-16-22.png)
+
+(If you wish to run this script on a folder of fonts, one method is shown in [this GitHub Gist](https://gist.github.com/arrowtype/db9562858a56ab45010e390c3f788b84).)
+
+### Other useful things to know about TTFont
+
+You can set data into almost any table & entry. For example, if the TTX for the `head` table includes `<fontRevision value="1.053"/>`, you can edit that with:
+
+```python
+font['head'].fontRevision = 1.054
+```
+
+You can delete a whole table like this:
+
+```python
+del font["mvar"]
+```
+
+There’s a lot more to it, much of which I still need to learn. As with many things in Python, [the `help()` function](https://docs.python.org/3/library/functions.html#help) is your best friend! A good start: one the command line, run `python3`, import TTFont, and then run `help(TTFont)`:
+
+```python
+python3
+>>> from fontTools.ttLib import TTFont
+>>> help(TTFont)
+```
 
 ------------------------------------------------------------------
 
 ## Other useful tools
 
-- https://github.com/google/woff2
+- https://github.com/google/woff2 to compress/decompress woff2 files
+
+## Other learning resources for FontTools
+
+- [The FontTools Docs](https://fonttools.readthedocs.io/en/latest/index.html)
+- [A very good TTFont tutorial by Lynne Yun](https://github.com/lynneyun/Tutorials/blob/6cabd407054431559b30d66d9b664462bb1d58b7/FontTools%20%26%20DrawBot/Navigating%20TTFs%20with%20fontTools.ipynb)
 
 ## Please do these two things:
 
