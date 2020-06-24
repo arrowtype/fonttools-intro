@@ -6,17 +6,17 @@ It is written from the perspective of a beginner/intermediate font designer & de
 
 Basically, this is an attempt to write & present the guide I wish I had three years ago, when I first encountered font development as a student at KABK TypeMedia. Some of it requires knowledge of navigating in a terminal and using Python, but a lot of it is written in hopes of being accessible to almost anyone.
 
-It is opinionated, limited to my current perspective, and possibly not 100% accurate. For this reason, I am presenting this at the [Typographics 2020 TypeLab](https://2020.typographics.com/typelab/) in hopes that more-experienced font developers might participate in coversation that can help me to correct any innaccuracies and improve this guide. Additionally, if you spot something here that is innacurate or if you have questions, please file an [issue](https://github.com/arrowtype/fonttools-intro/issues) or [pull request](https://github.com/arrowtype/fonttools-intro/pulls) in this repo to help myself & others learn!
+It is opinionated, limited to my current perspective, and possibly not 100% accurate. For this reason, I am presenting this at the [Typographics 2020 TypeLab](https://2020.typographics.com/typelab/) in hopes that more-experienced font developers might participate in conversation that can help me to correct any innaccuracies and improve this guide. Additionally, if you spot something here that is innacurate or if you have questions, please file an [issue](https://github.com/arrowtype/fonttools-intro/issues) or [pull request](https://github.com/arrowtype/fonttools-intro/pulls) in this repo to help myself & others learn!
 
 ## Basic things to know about fonts & font development
 
-Digital fonts, like any other digital media, are made up of data. Each glyph in a font is drawn from a collection of points on a coordinate grid, in scaleable curves called *Béziér* curves. Fonts have to map these drawings to [Unicode](https://en.wikipedia.org/wiki/List_of_Unicode_characters), so that the right glyph can display for each character in text on any computer. Fonts include a lot of other data: kerning, layout logic (e.g. for the place of accents, for stylistic sets, contextual alternates, etc), metrics for layout, family & style names for various software, license information, version numbers, and much more.
+Digital fonts, like any other digital media, are made up of data. Each glyph in a font is drawn from a collection of points on a coordinate grid, in scaleable curves called *Bézier* curves. Fonts have to map these drawings to [Unicode](https://en.wikipedia.org/wiki/List_of_Unicode_characters), so that the right glyph can display for each character in text on any computer. Fonts include a lot of other data: kerning, layout logic (e.g. for the place of accents, for stylistic sets, contextual alternates, etc), metrics for layout, family & style names for various software, license information, version numbers, and much more.
 
 While some fonts are standalone, single-style things, many fonts are members of large font families (AKA typefaces) which have different but related styles.
 
 Modern fonts follow the [OpenType specification](https://docs.microsoft.com/en-us/typography/opentype/spec/), which describes the data *tables* that all of this information is stored in. The OpenType spec is somewhat similar to the HTML, CSS, and JS specs that describe the “ground rules” that make up the modern web.
 
-For end-users, the most common font file types are `TTF` and `OTF` (typically the latter are more specifically `CFF` or `CFF2` files). The biggest technical difference between `TTF` and `CFF` files is how they store glyph shapes. `CFF` fonts store glyphs as *Cubic* Béziér curves, which are similar to curves you may be familiar with from the pen tools of apps like Adobe Illustrator, Sketch, & Figma – these curves have two “offcurve points” between all main “oncurve” points. `TTF` fonts use *Quadratic* Béziér curves, which can have one to many offcurve points between oncurve points. The two formats also take different approaches to data compression and hinting, and have pros & cons in different software. However, both types are OpenType fonts, and both share many of the same data tables.
+For end-users, the most common font file types are `TTF` and `OTF` (typically the latter are more specifically `CFF` or `CFF2` files). The biggest technical difference between `TTF` and `CFF` files is how they store glyph shapes. `CFF` fonts store glyphs as *Cubic* Bézier curves, which are similar to curves you may be familiar with from the pen tools of apps like Adobe Illustrator, Sketch, & Figma – these curves have two “offcurve points” between all main “oncurve” points. `TTF` fonts use *Quadratic* Bézier curves, which can have one to many offcurve points between oncurve points. The two formats also take different approaches to data compression and hinting, and have pros & cons in different software. However, both types are OpenType fonts, and both share many of the same data tables.
 
 `TTF` and `OTF` files are called *binaries* because they are made up of code that is not human-readable. Font designers don’t work (typically) work directly in binaries. Instead, they work in source files which are often `.glyphs` (for [GlyphsApp](https://glyphsapp.com/)) or `.ufo` (the open-source format Unified Font Object, which is most commonly edited in [RoboFont](https://robofont.com/)). While `.glyphs` files can include multiple font sources to make up a single font family, `.ufo` sources are individual files, and `.designspace` files describe how multiple UFOs make up a given font family.
 
@@ -37,11 +37,11 @@ For my purposes, FontTools is a set of code-based tools to read & manipulate:
 
 Rather than being one big thing, FontTools is a *collection* of [many tools](https://github.com/fonttools/fonttools/tree/master/Lib/fontTools), including:
 
-- **cu2qu** for conversion between cubic & quadratic Béziér curves
+- **cu2qu** for conversion between cubic & quadratic Bézier curves
 - **designspaceLib** for reading & writing Designspace files
 - **feaLib** for reading & writing OpenType features (e.g. accent placement, contextual glyph selection)
 - **merge** to merge multiple font files into together
-- **pens** that can read & draw different kinds of Béziér paths
+- **pens** that can read & draw different kinds of Bézier paths
 - **subset** which can make font files smaller by eliminating (or subsetting) certain glyphs
 - **ttLib** converts TrueType fonts to/from Python objects, and Python objects to/from TTX. This includes **TTFont** which can be used to read/edit data in font binaries
 - **ttx** is a command-line tool to convert font binaries to/from human-readable [XML](https://developer.mozilla.org/en-US/docs/Web/XML/XML_introduction), allowing the data to be inspected or easily changed
