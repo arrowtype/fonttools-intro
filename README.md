@@ -6,7 +6,7 @@ It is written from the perspective of a beginner/intermediate font designer & de
 
 Basically, this is an attempt to write & present the guide I wish I had three years ago, when I first encountered font development as a student at KABK TypeMedia. Some of it requires knowledge of navigating in a terminal and using Python, but a lot of it is written in hopes of being accessible to almost anyone.
 
-It is opinionated, limited to my current perspective, and possibly not 100% accurate. For this reason, I am presenting this at the [Typographics 2020 TypeLab](https://2020.typographics.com/typelab/) in hopes that more-experienced font developers might participate in conversation that can help me to correct any innaccuracies and improve this guide. Additionally, if you spot something here that is innacurate or if you have questions, please file an [issue](https://github.com/arrowtype/fonttools-intro/issues) or [pull request](https://github.com/arrowtype/fonttools-intro/pulls) in this repo to help myself & others learn!
+It is opinionated, limited to my current perspective, and possibly not 100% accurate. For this reason, I am presenting this at the [Typographics 2020 TypeLab](https://2020.typographics.com/typelab/) in hopes that more-experienced font developers might participate in conversation that can help me to correct any inaccuracies and improve this guide. Additionally, if you spot something here that is inaccurate or if you have questions, please file an [issue](https://github.com/arrowtype/fonttools-intro/issues) or [pull request](https://github.com/arrowtype/fonttools-intro/pulls) in this repo to help myself & others learn!
 
 ## Basic things to know about fonts & font development
 
@@ -18,7 +18,7 @@ Modern fonts follow the [OpenType specification](https://docs.microsoft.com/en-u
 
 For end-users, the most common font file types are `TTF` and `OTF` (typically the latter are more specifically `CFF` or `CFF2` files). The biggest technical difference between `TTF` and `CFF` files is how they store glyph shapes. `CFF` fonts store glyphs as *Cubic* Bézier curves, which are similar to curves you may be familiar with from the pen tools of apps like Adobe Illustrator, Sketch, & Figma – these curves have two “offcurve points” between all main “oncurve” points. `TTF` fonts use *Quadratic* Bézier curves, which can have one to many offcurve points between oncurve points. The two formats also take different approaches to data compression and hinting, and have pros & cons in different software. However, both types are OpenType fonts, and both share many of the same data tables.
 
-`TTF` and `OTF` files are called *binaries* because they are made up of code that is not human-readable. Font designers don’t work (typically) work directly in binaries. Instead, they work in source files which are often `.glyphs` (for [GlyphsApp](https://glyphsapp.com/)) or `.ufo` (the open-source format Unified Font Object, which is most commonly edited in [RoboFont](https://robofont.com/)). While `.glyphs` files can include multiple font sources to make up a single font family, `.ufo` sources are individual files, and `.designspace` files describe how multiple UFOs make up a given font family.
+`TTF` and `OTF` files are called *binaries* because they are made up of code that is not human-readable. Font designers don’t (typically) work directly in binaries. Instead, they work in source files which are often `.glyphs` (for [GlyphsApp](https://glyphsapp.com/)) or `.ufo` (the open-source format Unified Font Object, which is most commonly edited in [RoboFont](https://robofont.com/)). While `.glyphs` files can include multiple font sources to make up a single font family, `.ufo` sources are individual files, and `.designspace` files describe how multiple UFOs make up a given font family.
 
 From these sources, binary files like OTF & TTF can be exported/built. For fonts on the web, these OTF/TTF files can then be further compressed into web-specific formats (the standard of which is now `woff2`).
 
@@ -46,7 +46,7 @@ Rather than being one big thing, FontTools is a *collection* of [many tools](htt
 - **ttLib** converts TrueType fonts to/from Python objects, and Python objects to/from TTX. This includes **TTFont** which can be used to read/edit data in font binaries
 - **ttx** is a command-line tool to convert font binaries to/from human-readable [XML](https://developer.mozilla.org/en-US/docs/Web/XML/XML_introduction), allowing the data to be inspected or easily changed
 - **ufoLib** allows the reading & writing of UFO files & the data within
-- **varLib** allows the building of [variable fonts](https://variablefonts.io/), as well as the  instancing of variable fonts (trimming the amount of stylistic range in a variable font, either to make small variable fonts or single static fonts).
+- **varLib** allows the building of [variable fonts](https://variablefonts.io/), as well as the instancing of variable fonts (trimming the amount of stylistic range in a variable font, either to make small variable fonts or single static fonts).
 
 There are more tools than these, but I am still learning about them.
 
@@ -112,7 +112,7 @@ cd fonttools-intro # change directory into the cloned repo
 
 **Setup**
 
-1. To use FontTools, you first have to [Download Python](http://python.org/download/) and install it if you haven’t already.
+1. To use FontTools, you first have to [download Python](http://python.org/download/) and install it if you haven’t already.
 
 2. To try the examples in this repo, set up a virtual environment. Navigate to this directory in a command line, then make a venv and activate it:
 
@@ -140,7 +140,7 @@ A common way to use TTX is to simply build a XML from an OTF or TTF file (replac
 ttx examples/Recursive_VF_1.053.ttf # makes XML file examples/Recursive_VF_1.053.ttx
 ```
 
-However, often, you only want to look at a single table of a font such as the `name` table. You also usually don’t need to save a new ttx file, but just want to check values. So, my favorite recipe is this:
+However, often, you only want to look at a single table of a font such as the `name` table. You also usually don’t need to save a new TTX file, but just want to check values. So, my favorite recipe is this:
 
 ```bash
 ttx -t name -o- examples/Recursive_VF_1.053.ttf # just shows the name table
@@ -162,7 +162,7 @@ To efficiently edit font data, it is much more useful to reach for `ttFont`.
 
 ## TTFont
 
-`ttFont` makes it possible to manipulate font binaries “directly” with Python (some conversion is involved to/from font data & Python objects, but it is very fast). The basic use ttFont is in a Python script:
+`ttFont` makes it possible to manipulate font binaries “directly” with Python (some conversion is involved to/from font data & Python objects, but it is very fast). The basic use of ttFont is in a Python script:
 
 1. Import ttFont with `from fontTools.ttLib import TTFont`
 2. Use it to open a font path `font = TTFont(fontPath)`
@@ -215,7 +215,7 @@ As with many command line tools, you can learn how more about using it by runnin
 
 ## Instancing a Variable Font
 
-You can use the Instancer to make smaller instances of a variable font, “pinning” axes to a single value or limiting them to given ranges. You can run it as a python module or from the command line. (One current limitation: axis ranges must include their default position, such as Recursive’s `wght` default of `300`.) For example:
+You can use the Instancer to make smaller instances of a variable font, “pinning” axes to a single value or limiting them to given ranges. You can run it as a Python module or from the command line. (One current limitation: axis ranges must include their default position, such as Recursive’s `wght` default of `300`.) For example:
 
 ```bash
 fonttools varLib.instancer examples/Recursive_VF_1.053.ttf CASL=1 wght=300:850 # outputs examples/Recursive_VF_1.053-partial.ttf
@@ -253,7 +253,7 @@ You can delete a whole table like this:
 del font["mvar"]
 ```
 
-There’s a lot more to it, much of which I still need to learn. As with many things in Python, [the `help()` function](https://docs.python.org/3/library/functions.html#help) is your best friend! A good start: one the command line, run `python3`, import TTFont, and then run `help(TTFont)`. (You can exit the help view by hitting **q**, and exist out of the Python mode by hitting **control d**.)
+There’s a lot more to it, much of which I still need to learn. As with many things in Python, [the `help()` function](https://docs.python.org/3/library/functions.html#help) is your best friend! A good start: on the command line, run `python3`, import TTFont, and then run `help(TTFont)`. (You can exit the help view by hitting **q**, and exit out of the Python mode by hitting **control d**.)
 
 ```bash
 $ python3
@@ -270,7 +270,7 @@ Help on class TTFont in module fontTools.ttLib.ttFont # etc etc
 
 ## Other learning resources for FontTools
 
-- [The FontTools Docs](https://fonttools.readthedocs.io/en/latest/index.html)
+- [The FontTools docs](https://fonttools.readthedocs.io/en/latest/index.html)
 - [A very good TTFont tutorial by Lynne Yun](https://github.com/lynneyun/Tutorials/blob/6cabd407054431559b30d66d9b664462bb1d58b7/FontTools%20%26%20DrawBot/Navigating%20TTFs%20with%20fontTools.ipynb)
 
 ## Fonts used
