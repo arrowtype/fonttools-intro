@@ -137,6 +137,7 @@ def main():
         unicodesToKeep = ",".join(unicodesToKeep)
 
         # Subset input font. Keep specified unicodes only. Keep all font name IDs. Keep glyph names as-is. Keep notdef from font. Output to temporary path.
+        # TODO / Note: you may wish to add '--layout-features=*', to list, to keep opentype features.
         subset.main([fontPath, f'--unicodes={unicodesToKeep}', "--name-IDs=*", "--glyph-names", '--notdef-outline', f'--output-file={tempSubsetPath}'])
         subsetFont = TTFont(tempSubsetPath)
 
