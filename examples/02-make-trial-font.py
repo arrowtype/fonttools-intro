@@ -189,8 +189,8 @@ def main():
         setFontNameID(subsetFont, 1, newFamNameOne)
 
         # -------------------------------------------------------------------------------------------------
-        # save font with ".trial" added to name
-        ttfont.save(tempSubsetPath.replace(f".subset.{filetype}",f".trial.{filetype}"))
+        # save font with suffix added to name
+        subsetFont.save(tempSubsetPath.replace(f".subset.{filetype}",f".{nameSuffix}.{filetype}"))
         # clean up temp subset font
         os.remove(tempSubsetPath)
 
