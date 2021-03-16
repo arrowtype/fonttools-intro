@@ -46,7 +46,7 @@
 import os
 import sys
 from fontTools.ttLib import TTFont
-from fontTools.subset import main as subsetter
+from fontTools import subset
 import struct
 
 # GET / SET NAME HELPER FUNCTIONS
@@ -125,20 +125,25 @@ def main():
 
         except KeyError:
             print("\nReplacer glyph has no unicode; try checking the font file to copy in an exact name.\n")
+            print("Try checking the font file to copy in an exact glyph name, e.g. 'asterisk' rather than '*'.\n")
             print("Stopping execution.\n")
             break
 
         # make path of newly-subset font
         tempSubsetPath = fontPath.replace(f".{filetype}",f".subset.{filetype}")
 
-        # subset input font to remove glyphs that are being hidden
-        sys.argv = [None, fontPath, f'--unicodes={args.unicodes}', '--name-IDs="*"', '--notdef-outline', f'--output-file={tempSubsetPath}']
-        subsetter()  # this is what actually does the subsetting and writes the output file
+
+        unicodesToKeep = [hex(n) for n in unicodesToKeep]
+        unicodesToKeep = ",".join(unicodesToKeep)
+
+        # Subset input font. Keep specified unicodes only. Keep all font name IDs. Keep glyph names as-is. Keep notdef from font. Output to temporary path.
+        subset.main([fontPath, f'--unicodes={unicodesToKeep}', "--name-IDs=*", "--glyph-names", '--notdef-outline', f'--output-file={tempSubsetPath}'])
+        subsetFont = TTFont(tempSubsetPath)
 
         # -------------------------------------------------------------------------------------------------
         # then, add many additional unicodes to the replacer glyph to cover all diacritics, etc
 
-        for table in ttfont['cmap'].tables: 
+        for table in subsetFont['cmap'].tables: 
             for c in unicodesToHide:
                 table.cmap[c] = args.replacer
 
@@ -152,7 +157,7 @@ def main():
         # MUST check if familyName is not 'None', or this doesn't work (e.g. can't just check if None)
         if familyName != 'None':
             newFamName = familyName + f" {nameSuffix}"
-            setFontNameID(ttfont, 16, newFamName)
+            setFontNameID(subsetFont, 16, newFamName)
         else:
             familyName = getFontNameID(ttfont, 1)
             newFamName = familyName + f" {nameSuffix}"
@@ -163,25 +168,25 @@ def main():
         # Format: FamilynameTrial-Stylename
         currentPsName = getFontNameID(ttfont, 6)
         newPsName = currentPsName.replace('-',f'{nameSuffix}-')
-        setFontNameID(ttfont, 6, newPsName)
+        setFontNameID(subsetFont, 6, newPsName)
 
         # UPDATE NAME ID 4, full font name
         # Format: Familyname Trial Stylename
         currentFullName = getFontNameID(ttfont, 4)
         newFullName = currentFullName.replace(familyName,f'{familyName} {nameSuffix}')
-        setFontNameID(ttfont, 4, newFullName)
+        setFontNameID(subsetFont, 4, newFullName)
 
         # UPDATE NAME ID 3, unique font ID
         # Format: 1.001;ARRW;FamilynameTrial-Stylename
         currentUniqueName = getFontNameID(ttfont, 3)
         newUniqueName = currentUniqueName.replace('-',f'{nameSuffix}-')
-        setFontNameID(ttfont, 3, newUniqueName)
+        setFontNameID(subsetFont, 3, newUniqueName)
 
         # UPDATE NAME ID 1, unique font ID
-        # Format: Familyname Trial OR Familyname Trial Style (if not Regular, Itali, Bold, or Bold Italic)
+        # Format: Familyname Trial OR Familyname Trial Style (if not Regular, Italic, Bold, or Bold Italic)
         currentFamName = getFontNameID(ttfont, 1)
         newFamNameOne = currentFamName.replace(familyName,newFamName)
-        setFontNameID(ttfont, 1, newFamNameOne)
+        setFontNameID(subsetFont, 1, newFamNameOne)
 
         # -------------------------------------------------------------------------------------------------
         # save font with ".trial" added to name
