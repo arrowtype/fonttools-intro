@@ -5,7 +5,7 @@
 
     Run it from the directory above with the following command, include 1) a font path, and 2) a new family name:
 
-    python examples/01-ttfont-name-updates.py examples/Recursive_VF_1.053.ttf "New Name"
+    python examples/01-ttfont-name-updates.py examples/Recursive_VF_1.077.ttf "New Name"
 
     (The above will output NewName_VF_1.053.ttf)
 """

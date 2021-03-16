@@ -137,13 +137,13 @@ Just like web browsers have Developer Tools which allow you to “Inspect” the
 A common way to use TTX is to simply build a XML from an OTF or TTF file (replacing the all-caps placeholders with an actual font filepath):
 
 ```bash
-ttx examples/Recursive_VF_1.053.ttf # makes XML file examples/Recursive_VF_1.053.ttx
+ttx examples/Recursive_VF_1.077.ttf # makes XML file examples/Recursive_VF_1.077.ttx
 ```
 
 However, often, you only want to look at a single table of a font such as the `name` table. You also usually don’t need to save a new ttx file, but just want to check values. So, my favorite recipe is this:
 
 ```bash
-ttx -t name -o- examples/Recursive_VF_1.053.ttf # just shows the name table
+ttx -t name -o- examples/Recursive_VF_1.077.ttf # just shows the name table
 ```
 
 In that command, `-t name` specifies that only the name table should be converted to XML, and `-o-` specifies that the “output” should be nothing (and so, rather than a file, the XML is simply printed directly in the terminal). I remember this because `-o-` looks a bit like an emoticon owl.
@@ -151,9 +151,9 @@ In that command, `-t name` specifies that only the name table should be converte
 TTX will also compile a TTX file back into a binary font file. So, it is possible to TTX a font, make changes in the `.ttx` file, and then run TTX to save those edits into a working font.
 
 ```bash
-ttx examples/Recursive_VF_1.053.ttf # outputs examples/Recursive_VF_1.053.ttx
+ttx examples/Recursive_VF_1.077.ttf # outputs examples/Recursive_VF_1.077.ttx
 # you can make some manual edits, e.g. changing name table entries
-ttx examples/Recursive_VF_1.053.ttx # outputs examples/Recursive_VF_1.053#1.ttf
+ttx examples/Recursive_VF_1.077.ttx # outputs examples/Recursive_VF_1.077#1.ttf
 ```
 
 However, editing font files by editing the TTX is relatively slow and hard to repeat. For example, if you are processing a folder containing many static fonts within a type family, it will take time to covert from OTF/TTF to TTX, time to make the changes (even if you write a script to do so), and time to convert back to OTF/TTF. It will probably take a few minutes, and chances are, you may have to run the process many times while developing it, making it painfully slow. So, TTX is really best used as a font inspector. 
@@ -174,7 +174,7 @@ To efficiently edit font data, it is much more useful to reach for `ttFont`.
 A basic example of a Python script using TTFont is in `examples/00-ttfont-template.py`. To run it, make sure you navigate to this folder in a terminal, have your venv activated, and have FontTools installed, then run:
 
 ```bash
-python examples/00-ttfont-template.py examples/Recursive_VF_1.053.ttf
+python examples/00-ttfont-template.py examples/Recursive_VF_1.077.ttf
 ```
 
 It should output `→ name1 is 'Recursive Sans Linear Light'`.
@@ -193,7 +193,7 @@ One method is provided at `examples/01-ttfont-name-updates.py`. This includes:
 Run it from the directory above with the following command, include 1) a font path, and 2) a new family name:
 
 ```bash
-python examples/01-ttfont-name-updates.py examples/Recursive_VF_1.053.ttf "New Name"
+python examples/01-ttfont-name-updates.py examples/Recursive_VF_1.077.ttf "New Name"
 ```
 
 (The above command will output `NewName_VF_1.053.ttf`)
@@ -205,7 +205,7 @@ Notice how *stupidly fast* it is to run that change. It takes a little longer to
 Running the following in the command line will subset Recursive to have a basic Latin character set:
 
 ```bash
-fontPath="examples/Recursive_VF_1.053.ttf"
+fontPath="examples/Recursive_VF_1.077.ttf"
 pyftsubset $fontPath --flavor="woff2" --output-file="${fontPath/'.ttf'/--subset-GF_latin_basic.woff2}" --unicodes="U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD"
 ```
 
@@ -218,7 +218,7 @@ As with many command line tools, you can learn how more about using it by runnin
 You can use the Instancer to make smaller instances of a variable font, “pinning” axes to a single value or limiting them to given ranges. You can run it as a python module or from the command line. (One current limitation: axis ranges must include their default position, such as Recursive’s `wght` default of `300`.) For example:
 
 ```bash
-fonttools varLib.instancer examples/Recursive_VF_1.053.ttf CASL=1 wght=300:850 # outputs examples/Recursive_VF_1.053-partial.ttf
+fonttools varLib.instancer examples/Recursive_VF_1.077.ttf CASL=1 wght=300:850 # outputs examples/Recursive_VF_1.077-partial.ttf
 ```
 
 The docs in [instancer.py](https://github.com/fonttools/fonttools/blob/master/Lib/fontTools/varLib/instancer.py) are very good.
@@ -228,7 +228,7 @@ The docs in [instancer.py](https://github.com/fonttools/fonttools/blob/master/Li
 The script `examples/02-make-trial-font.py` puts several of these techniques together to make a “trial” font, keeping characters for specified unicodes while hiding the rest with a “replacer” glyph.
 
 ```bash
-python examples/02-make-trial-font.py examples/Recursive_VF_1.053.ttf -r "asterisk"
+python examples/02-make-trial-font.py examples/Recursive_VF_1.077.ttf -r "asterisk"
 ```
 
 This script also makes use of Python `argparse` to allow multiple arguments to be passed in from the command line. Run `python examples/02-make-trial-font.py --help` to see more options for the script (or look at the code itself).

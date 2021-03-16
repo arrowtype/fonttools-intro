@@ -3,7 +3,7 @@
 
     Run it from the directory above with the following command:
 
-    python examples/00-ttfont-template.py examples/Recursive_VF_1.053.ttf
+    python examples/00-ttfont-template.py examples/Recursive_VF_1.077.ttf
 """
 
 import sys
