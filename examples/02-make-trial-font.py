@@ -15,15 +15,15 @@
 
     2. Run this script on font file(s), either from the command line or from a shell script:
 
-        python3 <filepath>/create-trial_font.py <filepath>/font.ttf
+        python3 <filepath>/02-make-trial-font.py <filepath>/font.ttf
 
-    3. To see optional arguments, run:
+    Or, to see optional arguments, run:
 
-        python3 <filepath>/create-trial_font.py --help
+        python3 <filepath>/02-make-trial-font.py --help
 
     TODO:
-    - replacer glyph shouldn't actually need to have a *unicode* value; it just needs to have a glyph. Fix this.
-    - "hideRanges" should maybe be an option. By default (as it works right now), the script should just hide anything that is in the font but not in the "unicodes" arg.
+    - Replacer glyph shouldn't actually need to have a *unicode* value; it just needs to have a glyph. Fix this.
+    - Maybe: "hideRanges" should be an option. By default (as it works right now), the script justs hide anything that is in the font but not in the "unicodes" arg.
 
     LICENSE:
     
