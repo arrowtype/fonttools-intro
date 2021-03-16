@@ -264,7 +264,7 @@ Help on class TTFont in module fontTools.ttLib.ttFont # etc etc
 
 ------------------------------------------------------------------
 
-## Other useful tools
+## Also useful
 
 - https://github.com/google/woff2 to compress/decompress woff2 files
 
@@ -278,9 +278,3 @@ Help on class TTFont in module fontTools.ttLib.ttFont # etc etc
 This uses Recursive VF 1.053, available as an OFL on GitHub ([permalink](https://github.com/arrowtype/recursive/blob/006828dd941878bf0819a97c9d6286f24972bb16/fonts_1.031/Variable_TTF/Recursive_VF_1.031.ttf)).
 
 The slide presentation also uses Name Sans, [available from Future Fonts](https://www.futurefonts.xyz/arrowtype/name-sans).
-
-## Please do these two things:
-
-1. Check out https://arrowtype.github.io/vf-slnt-test/slnt-ital-tests/index.html, scroll to the bottom, and follow links to the Chromium & WebKit issues to voice your support for the prioritization of fixing the rendering of slnt & ital variable axes.
-
-2. Check out https://github.com/fonttools/fonttools/issues/1994 & let me know if you have experienced the same font-menu issue in other fonts or if you know a solution (but this is probably a macOS issue, so at the very least it would be good to show that many people are having trouble here)
