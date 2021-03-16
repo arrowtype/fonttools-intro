@@ -22,6 +22,7 @@
         python3 <filepath>/02-make-trial-font.py --help
 
     TODO:
+    - Add trial suffix to variable postscript name IDs, if relevant. E.g. Recursive VF has nameIDs 275 RecursiveMonoLnr-Light, etc for each instance
     - Replacer glyph shouldn't actually need to have a *unicode* value; it just needs to have a glyph. Fix this.
     - Maybe: "hideRanges" should be an option. By default (as it works right now), the script justs hide anything that is in the font but not in the "unicodes" arg.
 
