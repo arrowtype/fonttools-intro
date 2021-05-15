@@ -28,7 +28,7 @@
 
     LICENSE:
     
-    Copyright 2020 Arrow Type LLC / Stephen Nixon
+    Copyright 2021 Arrow Type LLC / Stephen Nixon
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -44,11 +44,10 @@
 
 """
 
+import shutil
 import os
-import sys
 from fontTools.ttLib import TTFont
 from fontTools import subset
-import struct
 
 # GET / SET NAME HELPER FUNCTIONS
 
@@ -105,49 +104,56 @@ def main():
 
         filetype = fontPath.split(".")[-1]
 
-        # get set of unicode ints in font
-        rangeInFont = {x for x in ttfont["cmap"].getBestCmap()}
+        # make path of temporary font for subsetting
+        tempFontPath = fontPath.replace(f".{filetype}",f".temporary.{filetype}")
 
-        unicodesToKeep = listUnicodeRanges(args.unicodes)
-
-        unicodesToHide = {intUnicode for intUnicode in rangeInFont if intUnicode not in unicodesToKeep}
-
-        # get cmap of font, find unicode for glyph with name of replacerGlyph
-        try:
-            if "U+" in args.replacer:
-                replacerGlyphUnicode = args.replacer.replace("U+","")
-            else:
-                replacerGlyphUnicode = list(ttfont["cmap"].buildReversed()[args.replacer])[0]
-
-            unicodesToKeep.add(replacerGlyphUnicode)
-
-            if replacerGlyphUnicode in unicodesToHide:
-                unicodesToHide.remove(replacerGlyphUnicode) # TODO: check if this fails if item not in set
-
-        except KeyError:
-            print("\nReplacer glyph has no unicode; try checking the font file to copy in an exact name.\n")
-            print("Try checking the font file to copy in an exact glyph name, e.g. 'asterisk' rather than '*'.\n")
-            print("Stopping execution.\n")
-            break
-
-        # make path of newly-subset font
-        tempSubsetPath = fontPath.replace(f".{filetype}",f".subset.{filetype}")
+        if args.extended:
+            shutil.copyfile(fontPath, tempFontPath)
+            tempFont = TTFont(tempFontPath)
 
 
-        unicodesToKeep = [hex(n) for n in unicodesToKeep]
-        unicodesToKeep = ",".join(unicodesToKeep)
+        if not args.extended:
 
-        # Subset input font. Keep specified unicodes only. Keep all font name IDs. Keep glyph names as-is. Keep notdef from font. Output to temporary path.
-        # TODO / Note: you may wish to add '--layout-features=*', to list, to keep opentype features.
-        subset.main([fontPath, f'--unicodes={unicodesToKeep}', "--name-IDs=*", "--glyph-names", '--notdef-outline', f'--output-file={tempSubsetPath}'])
-        subsetFont = TTFont(tempSubsetPath)
+            # get set of unicode ints in font
+            rangeInFont = {x for x in ttfont["cmap"].getBestCmap()}
 
-        # -------------------------------------------------------------------------------------------------
-        # then, add many additional unicodes to the replacer glyph to cover all diacritics, etc
+            unicodesToKeep = listUnicodeRanges(args.unicodes)
 
-        for table in subsetFont['cmap'].tables: 
-            for c in unicodesToHide:
-                table.cmap[c] = args.replacer
+            unicodesToHide = {intUnicode for intUnicode in rangeInFont if intUnicode not in unicodesToKeep}
+
+            # get cmap of font, find unicode for glyph with name of replacerGlyph
+            try:
+                if "U+" in args.replacer:
+                    replacerGlyphUnicode = args.replacer.replace("U+","")
+                else:
+                    replacerGlyphUnicode = list(ttfont["cmap"].buildReversed()[args.replacer])[0]
+
+                unicodesToKeep.add(replacerGlyphUnicode)
+
+                if replacerGlyphUnicode in unicodesToHide:
+                    unicodesToHide.remove(replacerGlyphUnicode) # TODO: check if this fails if item not in set
+
+            except KeyError:
+                print("\nReplacer glyph has no unicode; try checking the font file to copy in an exact name.\n")
+                print("Try checking the font file to copy in an exact glyph name, e.g. 'asterisk' rather than '*'.\n")
+                print("Stopping execution.\n")
+                break
+
+
+            unicodesToKeep = [hex(n) for n in unicodesToKeep]
+            unicodesToKeep = ",".join(unicodesToKeep)
+
+            # Subset input font. Keep specified unicodes only. Keep all font name IDs. Keep glyph names as-is. Keep notdef from font. Output to temporary path.
+            # Note: you may wish to remove '--layout-features=*' from this list to limit opentype features.
+            subset.main([fontPath, f'--unicodes={unicodesToKeep}', "--name-IDs=*", "--layout-features=*", "--glyph-names", '--notdef-outline', f'--output-file={tempFontPath}'])
+            tempFont = TTFont(tempFontPath)
+
+            # -------------------------------------------------------------------------------------------------
+            # then, add many additional unicodes to the replacer glyph to cover all diacritics, etc
+
+            for table in tempFont['cmap'].tables: 
+                for c in unicodesToHide:
+                    table.cmap[c] = args.replacer
 
         # -------------------------------------------------------------------------------------------------
         # update font names
@@ -159,7 +165,7 @@ def main():
         # MUST check if familyName is not 'None', or this doesn't work (e.g. can't just check if None)
         if familyName != 'None':
             newFamName = familyName + f" {nameSuffix}"
-            setFontNameID(subsetFont, 16, newFamName)
+            setFontNameID(tempFont, 16, newFamName)
         else:
             familyName = getFontNameID(ttfont, 1)
             newFamName = familyName + f" {nameSuffix}"
@@ -170,31 +176,31 @@ def main():
         # Format: FamilynameTrial-Stylename
         currentPsName = getFontNameID(ttfont, 6)
         newPsName = currentPsName.replace('-',f'{nameSuffix}-')
-        setFontNameID(subsetFont, 6, newPsName)
+        setFontNameID(tempFont, 6, newPsName)
 
         # UPDATE NAME ID 4, full font name
         # Format: Familyname Trial Stylename
         currentFullName = getFontNameID(ttfont, 4)
         newFullName = currentFullName.replace(familyName,f'{familyName} {nameSuffix}')
-        setFontNameID(subsetFont, 4, newFullName)
+        setFontNameID(tempFont, 4, newFullName)
 
         # UPDATE NAME ID 3, unique font ID
         # Format: 1.001;ARRW;FamilynameTrial-Stylename
         currentUniqueName = getFontNameID(ttfont, 3)
         newUniqueName = currentUniqueName.replace('-',f'{nameSuffix}-')
-        setFontNameID(subsetFont, 3, newUniqueName)
+        setFontNameID(tempFont, 3, newUniqueName)
 
         # UPDATE NAME ID 1, unique font ID
         # Format: Familyname Trial OR Familyname Trial Style (if not Regular, Italic, Bold, or Bold Italic)
         currentFamName = getFontNameID(ttfont, 1)
         newFamNameOne = currentFamName.replace(familyName,newFamName)
-        setFontNameID(subsetFont, 1, newFamNameOne)
+        setFontNameID(tempFont, 1, newFamNameOne)
 
         # -------------------------------------------------------------------------------------------------
         # save font with suffix added to name
-        subsetFont.save(tempSubsetPath.replace(f".subset.{filetype}",f".{nameSuffix}.{filetype}"))
+        tempFont.save(tempFontPath.replace(f".temporary.{filetype}",f".{nameSuffix}.{filetype}"))
         # clean up temp subset font
-        os.remove(tempSubsetPath)
+        os.remove(tempFontPath)
 
 
 if __name__ == '__main__':
@@ -204,6 +210,9 @@ if __name__ == '__main__':
     parser.add_argument('fontPaths', 
                         help='Path(s) to font file(s)',
                         nargs="+")
+    parser.add_argument("-x", "--extended",
+                        action='store_true',
+                        help='Skips character subsetting to make an "extended" trial font, with a full, unmodified character set.')
     parser.add_argument("-u", "--unicodes",
                         default="U+0020-0039, U+003A-005A, U+0061-007A, U+2018-201D, U+005B, U+005D",
                         help='String of unicodes or unicode ranges to keep, comma-separated. Default is a basic Latin set: "U+0020-0039, U+003A-005A, U+0061-007A, U+2018-201D, U+005B, U+005D"')
