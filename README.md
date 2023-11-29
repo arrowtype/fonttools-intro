@@ -6,7 +6,7 @@ It is written from the perspective of a beginner/intermediate font designer & de
 
 Basically, this is an attempt to write & present the guide I wish I had three years ago, when I first encountered font development as a student at KABK TypeMedia. Some of it requires knowledge of navigating in a terminal and using Python, but a lot of it is written in hopes of being accessible to almost anyone.
 
-It is opinionated, limited to my current perspective, and possibly not 100% accurate. For this reason, I am presenting this at the [Typographics 2020 TypeLab](https://2020.typographics.com/typelab/) in hopes that more-experienced font developers might participate in conversation that can help me to correct any innaccuracies and improve this guide. Additionally, if you spot something here that is innacurate or if you have questions, please file an [issue](https://github.com/arrowtype/fonttools-intro/issues) or [pull request](https://github.com/arrowtype/fonttools-intro/pulls) in this repo to help myself & others learn!
+It is opinionated, limited to my current perspective, and possibly not 100% accurate. For this reason, I am presenting this at the [Typographics 2020 TypeLab](https://2020.typographics.com/typelab/) in hopes that more-experienced font developers might participate in conversation that can help me to correct any inaccuracies and improve this guide. Additionally, if you spot something here that is innacurate or if you have questions, please file an [issue](https://github.com/arrowtype/fonttools-intro/issues) or [pull request](https://github.com/arrowtype/fonttools-intro/pulls) in this repo to help myself & others learn!
 
 ## Basic things to know about fonts & font development
 
